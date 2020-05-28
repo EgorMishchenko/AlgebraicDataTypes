@@ -24,7 +24,7 @@ namespace AlgebraicDataTypes
     /// <typeparam name="E">The type of error</typeparam>
     /// <param name="value">The value of success result.</param>
     /// <returns>New success result with specified value.</returns>
-    public static Result<T, E> CreateSuccess<T, E>(T value) where E : Error // Former Ok
+    public static Result<T, E> CreateSuccess<T, E>(T value) where E : Error 
     {
       return new Result<T, E>(value);
     }
@@ -36,7 +36,7 @@ namespace AlgebraicDataTypes
     /// <typeparam name="E">The type of error.</typeparam>
     /// <param name="error"></param>
     /// <returns>New failed result with specific error.</returns>
-    public static Result<T, E> CreateFailure<T, E>(E error) where E : Error // Former Error
+    public static Result<T, E> CreateFailure<T, E>(E error) where E : Error 
     {
       if (error == null)
         throw new ArgumentNullException(nameof(error), "An error object must always be specified in the error case.");

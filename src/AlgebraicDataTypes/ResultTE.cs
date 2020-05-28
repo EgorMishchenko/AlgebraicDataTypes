@@ -31,7 +31,7 @@ namespace AlgebraicDataTypes
     /// <param name="onSuccess">Delegate to execute in case of success.</param>
     /// <param name="onFail">Delegate to execute in case of failure.</param>
     /// <returns>The result of execution success or failed delegate.</returns>
-    public V Select<V>(Func<T, V> onSuccess, Func<E, V> onFail) // maybe call this method "Execute"
+    public V Select<V>(Func<T, V> onSuccess, Func<E, V> onFail) 
     {
       return IsSuccess ? onSuccess(_value) : onFail(_error);
     }
@@ -54,7 +54,7 @@ namespace AlgebraicDataTypes
     /// <typeparam name="V">The type of value that will be returned if success.</typeparam>
     /// <param name="fn">Delegate to execute in success case that returns result.</param>
     /// <returns>Successful or failed result.</returns>
-    public Result<V, E> HandleSuccess<V>(Func<T, Result<V, E>> fn) // former "Then"
+    public Result<V, E> HandleSuccess<V>(Func<T, Result<V, E>> fn) 
     {
       return IsSuccess ? fn(_value) : new Result<V, E>(_error);
     }
@@ -76,11 +76,11 @@ namespace AlgebraicDataTypes
     }
 
     /// <summary>
-    /// Execute delegate that returns result if failure or this result. Former "Handle"
+    /// Execute delegate that returns result if failure or this result. 
     /// </summary>
     /// <param name="fn">Delegate to execute in failure case.</param>
     /// <returns></returns>
-    public Result<T, E> HandleFailure(Func<E, Result<T, E>> fn) // former "Handle"
+    public Result<T, E> HandleFailure(Func<E, Result<T, E>> fn) 
     {
       return IsError ? fn(_error) : this;
     }
