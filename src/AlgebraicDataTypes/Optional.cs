@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AlgebraicDataTypes
+﻿namespace AlgebraicDataTypes
 {
   public static class Optional
   {
@@ -14,7 +10,12 @@ namespace AlgebraicDataTypes
     /// <returns>New instance of optional with specified value.</returns>
     public static Optional<T> CreateOptionalWithValue<T>(T value)
     {
-      return new Optional<T>(value);
+      return (Optional<T>) value;
     }
+
+    /// <summary>
+    /// Create None value
+    /// </summary>
+    public static ProtoNone CreateNone => new ProtoNone();
   }
 }
