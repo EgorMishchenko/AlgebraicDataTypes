@@ -4,7 +4,6 @@ namespace AlgebraicDataTypes
 {
   /// <summary>
   /// Represent Maybe monad which can contains some value or none.
-  /// We can create Optional without value using new, because struct initialize with default values with new operator.
   /// </summary>
   /// <typeparam name="T">Type of value that optional can contains.</typeparam>
   public readonly struct Optional<T> : IEquatable<Optional<T>>, IEquatable<T>
@@ -51,7 +50,7 @@ namespace AlgebraicDataTypes
     }
 
     /// <summary>
-    /// Determines whether an element is in <see cref="Optional{T}"/>>.
+    /// Determines whether an element is in Optional.
     /// </summary>
     /// <param name="value">The value to check.</param>
     /// <returns></returns>
@@ -59,11 +58,12 @@ namespace AlgebraicDataTypes
     {
       if (HasValue)
       {
-        return value == null ? _value == null : value.Equals(_value);
+        return value.Equals(_value);
       }
 
       return false;
     }
+
     public void Case(Action<T> some, Action none)
     {
       if (HasValue)
@@ -109,7 +109,7 @@ namespace AlgebraicDataTypes
       }
       else
       {
-        return (Optional<U>) Optional.CreateNone;
+        return Optional.CreateNone;
       }
     }
 

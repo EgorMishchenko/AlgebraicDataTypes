@@ -72,7 +72,60 @@ namespace AlgebraicDataTypes.Tests
       Assert.False(optionalWithoutValue.HasValue);
       Assert.Equal(testClass, optionalWithoutValue.GetValueOrDefault(testClass));
     }
-    
+
+    [Fact]
+    public void Optional_CreateOptionalClass_WithValue()
+    {
+      var testClass = new TestClass { TestProperty = 111 };
+
+      Optional<TestClass> optional = testClass;
+
+      var defaultTestClass = new TestClass { TestProperty = 0 };
+     
+      Assert.True(optional.HasValue);
+      Assert.Equal(testClass, optional.GetValueOrDefault(defaultTestClass));
+    }
+
+    #endregion
+
+    #region Contains
+
+    [Fact]
+    public void Optional_ContainsString_True()
+    {
+      Optional<string> optionalWithoutValue = "text";
+
+      Assert.True(optionalWithoutValue.HasValue);
+      Assert.True(optionalWithoutValue.Contains("text"));
+    }
+
+    [Fact]
+    public void Optional_ContainsString_False()
+    {
+      Optional<string> optionalWithoutValue = "text";
+
+      Assert.True(optionalWithoutValue.HasValue);
+      Assert.False(optionalWithoutValue.Contains("different_text"));
+    }
+
+    [Fact]
+    public void Optional_WithNull_Contains_False()
+    {
+      Optional<string> optionalWithoutValue = null;
+
+      Assert.False(optionalWithoutValue.HasValue);
+      Assert.False(optionalWithoutValue.Contains("text"));
+    }
+
+    [Fact]
+    public void Optional_WithNull_ContainsNull_False()
+    {
+      Optional<string> optionalWithoutValue = null;
+
+      Assert.False(optionalWithoutValue.HasValue);
+      Assert.False(optionalWithoutValue.Contains(null));
+    }
+
     #endregion
 
     [Fact]
