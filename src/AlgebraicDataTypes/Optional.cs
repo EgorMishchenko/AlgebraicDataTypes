@@ -10,11 +10,11 @@
     /// <returns>New instance of optional with specified value.</returns>
     public static Optional<T> CreateOptionalWithValue<T>(T value)
     {
-      return (Optional<T>) value;
+      return value;
     }
 
     /// <summary>
-    /// Create None value
+    /// Create None value.
     /// </summary>
     public static ProtoNone CreateNone => new ProtoNone();
   }

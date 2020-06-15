@@ -93,19 +93,19 @@ namespace AlgebraicDataTypes.Tests
     [Fact]
     public void Optional_ContainsString_True()
     {
-      Optional<string> optionalWithoutValue = "text";
+      Optional<string> optional = "text";
 
-      Assert.True(optionalWithoutValue.HasValue);
-      Assert.True(optionalWithoutValue.Contains("text"));
+      Assert.True(optional.HasValue);
+      Assert.True(optional.Contains("text"));
     }
 
     [Fact]
-    public void Optional_ContainsString_False()
+    public void Optional_ContainsDifferentString_False()
     {
-      Optional<string> optionalWithoutValue = "text";
+      Optional<string> optional = "text";
 
-      Assert.True(optionalWithoutValue.HasValue);
-      Assert.False(optionalWithoutValue.Contains("different_text"));
+      Assert.True(optional.HasValue);
+      Assert.False(optional.Contains("different_text"));
     }
 
     [Fact]
@@ -128,30 +128,335 @@ namespace AlgebraicDataTypes.Tests
 
     #endregion
 
+    #region Case
+
+    [Fact]
+    public void OptionalString_Case_TwoActions_WithValue()
+    {
+      Optional<string> optional = "text";
+
+      Assert.True(optional.HasValue);
+
+      var testClass = new TestClass();
+      optional.Case(some => { testClass.TestMessage = some + " passed"; }, () => { testClass.TestMessage = "none"; });
+
+      Assert.Equal("text passed", testClass.TestMessage);
+      Assert.Equal(0, testClass.TestProperty);
+    }
+
+    [Fact]
+    public void OptionalInt_Case_TwoActions_WithValue()
+    {
+      Optional<int> optional = 10;
+
+      Assert.True(optional.HasValue);
+
+      var testClass = new TestClass();
+      optional.Case(some => { testClass.TestProperty = some + 1; }, () => { testClass.TestMessage = "none"; });
+
+      Assert.Null(testClass.TestMessage);
+      Assert.Equal(11, testClass.TestProperty);
+    }
+
+    [Fact]
+    public void OptionalInt_Case_TwoActions_WithoutValue()
+    {
+      Optional<int> optional = new Optional<int>();
+
+      Assert.False(optional.HasValue);
+
+      var testClass = new TestClass();
+      optional.Case(some => { testClass.TestProperty = some + 1; }, () => { testClass.TestMessage = "none"; });
+
+      Assert.Equal("none", testClass.TestMessage);
+      Assert.Equal(0, testClass.TestProperty);
+    }
+
+    [Fact]
+    public void OptionalString_Case_TwoActions_WithoutValue()
+    {
+      Optional<string> optional = new Optional<string>();
+
+      Assert.False(optional.HasValue);
+
+      var testClass = new TestClass();
+      optional.Case(some => { testClass.TestMessage = "some"; }, () => { testClass.TestMessage = "none"; });
+
+      Assert.Equal("none", testClass.TestMessage);
+      Assert.Equal(0, testClass.TestProperty);
+    }
+
+    [Fact]
+    public void OptionalString_Case_FuncTUAndU_WithValue_ReturnInt()
+    {
+      Optional<string> optional = "text";
+
+      Assert.True(optional.HasValue);
+      Assert.Equal(10, optional.Case<int>(some => 10, 666));
+    }
+
+    [Fact]
+    public void OptionalString_Case_FuncTUAndU_WithoutValue_ReturnInt()
+    {
+      Optional<string> optional = new Optional<string>();
+
+      Assert.True(optional.HasValue);
+      Assert.Equal(666, optional.Case<int>(some => 10, 666));
+    }
+
+    [Fact]
+    public void OptionalString_Case_FuncTUAndU_WithValue_ReturnBool()
+    {
+      Optional<string> optional = "text";
+
+      Assert.True(optional.HasValue);
+      Assert.True(optional.Case<bool>(some => true, false));
+    }
+
+    [Fact]
+    public void OptionalString_Case_FuncTUAndU_WithoutValue_ReturnBool()
+    {
+      Optional<string> optional = new Optional<string>();
+
+      Assert.False(optional.HasValue);
+      Assert.False(optional.Case<bool>(some => true, false));
+    }
+
+    [Fact]
+    public void OptionalString_Case_FuncTUAndU_WithValue_ReturnString()
+    {
+      Optional<string> optional = "text";
+
+      Assert.True(optional.HasValue);
+      Assert.Equal("text changed", optional.Case<string>(some => some + " changed", "none"));
+    }
+
+    [Fact]
+    public void OptionalString_Case_FuncTUAndU_WithoutValue_ReturnString()
+    {
+      Optional<string> optional = new Optional<string>();
+
+      Assert.False(optional.HasValue);
+      Assert.Equal("none", optional.Case<string>(some => some + " changed", "none"));
+    }
+
+    [Fact]
+    public void OptionalString_Case_FuncTUAndFuncU_WithValue_ReturnInt()
+    {
+      Optional<string> optional = "text";
+
+      Assert.True(optional.HasValue);
+      Assert.Equal(10, optional.Case<int>(some => 10, () => 666));
+    }
+
+    [Fact]
+    public void OptionalString_Case_FuncTUAndFuncU_WithoutValue_ReturnInt()
+    {
+      Optional<string> optional = new Optional<string>();
+
+      Assert.False(optional.HasValue);
+      Assert.Equal(666, optional.Case<int>(some => 10, () => 666));
+    }
+
+    [Fact]
+    public void OptionalString_Case_FuncTUAndFuncU_WithoutValue_ReturnInt2()
+    {
+      Optional<string> optional = new Optional<string>();
+
+      Assert.False(optional.HasValue);
+      Assert.Equal(20, optional.Case<int>(some => 10, () =>
+      {
+        var result = 10;
+        for (int i = 0; i < 10; i++)
+        {
+          result++;
+        }
+
+        return result;
+      }));
+    }
+
+    #endregion
+
+    #region Select
+
     [Fact]
     public void Optional_Select_WithValue()
     {
-      Optional<string> optionalWithValue = "string_value";
+      Optional<string> optional = "text";
 
-      var newOptional = optionalWithValue.Select(x => "new_string_value");
+      Assert.True(optional.HasValue);
 
-      Assert.Equal("new_string_value", newOptional.GetValueOrDefault(string.Empty));
+      var newOptional = optional.Select(some => "new_" + some);
+
+      Assert.Equal("new_text", newOptional.GetValueOrDefault(string.Empty));
     }
 
     [Fact]
-    public void Optional_Select_WithNone()
+    public void Optional_Select_WithoutValue()
     {
-      var optionalNone = new Optional<string>();
+      var optional = new Optional<string>();
 
-      Assert.False(optionalNone.HasValue);
-      var newOptional = optionalNone.Select(x => "on_none_case_string");
+      Assert.False(optional.HasValue);
 
-      Assert.Equal("", newOptional.GetValueOrDefault(string.Empty));
+      var newOptional = optional.Select<string>(some => "new_" + some);
+
+      Assert.Equal("none", newOptional.GetValueOrDefault("none"));
     }
+
+
+    [Fact]
+    public void Optional_Select_WithValue_ReturnInt()
+    {
+      Optional<string> optional = "text";
+
+      Assert.True(optional.HasValue);
+
+      var newOptional = optional.Select<int>(some => 100);
+
+      Assert.Equal(100, newOptional.GetValueOrDefault(0));
+    }
+
+    [Fact]
+    public void Optional_Select_WithClassValue()
+    {
+      Optional<TestClass> optional = new TestClass{ TestMessage = "text", TestProperty = 99 };
+
+      Assert.True(optional.HasValue);
+
+      var newOptional = optional.Select(some =>
+      {
+        some.TestMessage = "new_text";
+        return some;
+      });
+
+      Assert.Equal("new_text", newOptional.GetValueOrDefault(null).TestMessage);
+    }
+
+    #endregion
+
+    #region Bind
+
+    [Fact]
+    public void Optional_Bind_WithStringValue()
+    {
+      Optional<string> optional = "text";
+
+      Assert.True(optional.HasValue);
+
+      var newOptional = optional.Bind<string>(some => "new_" + some);
+
+      Assert.Equal("new_text", newOptional.GetValueOrDefault(string.Empty));
+    }
+
+    [Fact]
+    public void Optional_Bind_WithStringValue2()
+    {
+      Optional<string> optional = "text";
+
+      Assert.True(optional.HasValue);
+
+      var newOptional = optional.Bind<string>(some => "new_" + some).Bind<string>(some => "new_" + some);
+
+      Assert.Equal("new_new_text", newOptional.GetValueOrDefault(string.Empty));
+    }
+
+    [Fact]
+    public void Optional_Bind_WithoutStringValue()
+    {
+      var optional = new Optional<string>();
+
+      Assert.False(optional.HasValue);
+
+      var newOptional = optional.Bind<string>(some => "new_" + some);
+
+      Assert.Equal(string.Empty, newOptional.GetValueOrDefault(string.Empty));
+    }
+
+    [Fact]
+    public void Optional_Bind_WithClassValue()
+    {
+      Optional<TestClass> optional = new TestClass { TestMessage = "text", TestProperty = 100 };
+
+      Assert.True(optional.HasValue);
+
+      var newOptional = optional.Bind<TestClass>(some => new TestClass{ TestMessage = "new_" + some.TestMessage});
+
+      Assert.Equal("new_text", newOptional.GetValueOrDefault(null).TestMessage);
+    }
+
+    [Fact]
+    public void Optional_Bind_WithoutClassValue()
+    {
+      var optional = new Optional<TestClass>();
+
+      Assert.False(optional.HasValue);
+
+      var newOptional = optional.Bind<TestClass>(some => new TestClass { TestMessage = "new_" + some.TestMessage });
+
+      Assert.Null(newOptional.GetValueOrDefault(null));
+    }
+
+    #endregion
+
+    #region Or
+
+    [Fact]
+    public void Optional_Or_WithStringValue()
+    {
+      Optional<string> optional = "text";
+
+      Assert.True(optional.HasValue);
+
+      Assert.Equal("text", optional.Or(() => "none"));
+    }
+
+    [Fact]
+    public void Optional_Or_WithoutStringValue()
+    {
+      var optional = new Optional<string>();
+
+      Assert.False(optional.HasValue);
+
+      Assert.Equal("none", optional.Or(() => "none"));
+    }
+
+    [Fact]
+    public void Optional_Or_WithIntValue()
+    {
+      Optional<int> optional = 99;
+
+      Assert.True(optional.HasValue);
+
+      Assert.Equal(99, optional.Or(() => 100));
+    }
+
+    [Fact]
+    public void Optional_OrOptional_WithStringValue()
+    {
+      Optional<string> optional = "text";
+
+      Assert.True(optional.HasValue);
+
+      Assert.Equal((Optional<string>)"text", optional.Or(() => (Optional<string>)"none"));
+    }
+
+    [Fact]
+    public void Optional_OrOptional_WithoutStringValue()
+    {
+      var optional = new Optional<string>();
+
+      Assert.False(optional.HasValue);
+
+      Assert.Equal((Optional<string>)"none", optional.Or(() => (Optional<string>)"none"));
+    }
+
+    #endregion
 
     private class TestClass
     {
       public int TestProperty { get; set; }
+      public string TestMessage { get; set; }
     }
   }
 }

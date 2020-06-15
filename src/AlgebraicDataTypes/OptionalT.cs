@@ -50,10 +50,10 @@ namespace AlgebraicDataTypes
     }
 
     /// <summary>
-    /// Determines whether an element is in Optional.
+    /// Determines whether an element contains in optional.
     /// </summary>
     /// <param name="value">The value to check.</param>
-    /// <returns></returns>
+    /// <returns>True if contains, False if not.</returns>
     public bool Contains(T value)
     {
       if (HasValue)
@@ -64,89 +64,69 @@ namespace AlgebraicDataTypes
       return false;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="some"></param>
+    /// <param name="none"></param>
     public void Case(Action<T> some, Action none)
     {
       if (HasValue)
-      {
         some(_value);
-      }
       else
-      {
         none();
-      }
-
     }
 
     public U Case<U>(Func<T, U> some, U none)
     {
-      if (HasValue)
-      {
-        return some(_value);
-      }
-      else
-      {
-        return none;
-      }
+      return HasValue ? some(_value) : none;
     }
 
     public U Case<U>(Func<T, U> some, Func<U> none)
     {
-      if (HasValue)
-      {
-        return some(_value);
-      }
-      else
-      {
-        return none();
-      }
+      return HasValue ? some(_value) : none();
     }
 
+    /// <summary>
+    /// Execute func if Optional has value. (Type of returned value set implicitly)
+    /// </summary>
+    /// <typeparam name="U">Type of value returned from func if Optional has a value.</typeparam>
+    /// <param name="map">Function thar execute if Optional has value.</param>
+    /// <returns>Optional with value or None.</returns>
     public Optional<U> Select<U>(Func<T, U> map)
     {
-      if (HasValue)
-      {
-        return Optional.CreateOptionalWithValue<U>(map(_value));
-      }
-      else
-      {
-        return Optional.CreateNone;
-      }
+      return HasValue ? Optional.CreateOptionalWithValue(map(_value)) : Optional.CreateNone;
     }
 
+    /// <summary>
+    /// Execute func if Optional has value. (Type of returned value should be set explicitly)
+    /// </summary>
+    /// <typeparam name="U">Type of value returned from func if Optional has a value.</typeparam>
+    /// <param name="bind">Function thar execute if Optional has value.</param>
+    /// <returns></returns>
     public Optional<U> Bind<U>(Func<T, Optional<U>> bind)
     {
-      if (HasValue)
-      {
-        return bind(_value);
-      }
-      else
-      {
-        return Optional.CreateNone;
-      }
+      return HasValue ? bind(_value) : Optional.CreateNone;
     }
 
+    /// <summary>
+    /// Execute func if None or return value of Optional.
+    /// </summary>
+    /// <param name="none">Func for execution if Optional has no value.</param>
+    /// <returns>Execute func if None or return value of Optional.</returns>
     public T Or(Func<T> none)
     {
-      if (HasValue)
-      {
-        return _value;
-      }
-      else
-      {
-        return none();
-      }
+      return HasValue ? _value : none();
     }
 
+    /// <summary>
+    /// Execute func returned Optional if None or return this Optional.
+    /// </summary>
+    /// <param name="none"></param>
+    /// <returns></returns>
     public Optional<T> Or(Func<Optional<T>> none)
     {
-      if (HasValue)
-      {
-        return this;
-      }
-      else
-      {
-        return none();
-      }
+      return HasValue ? this : none();
     }
 
     /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
